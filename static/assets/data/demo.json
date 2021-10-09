@@ -1,0 +1,32 @@
+  {
+    "model": {
+      "path": "static/assets/data/models/",
+      "resourcePath": "static/assets/data/models/",
+      "name": "demo.obj",
+      "type": "obj",
+      "mtlName": "demo.mtl",
+      "maps": {
+        "diffuse": "",
+        "light": "",
+        "normal": ""
+      },
+      "object": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "projectName": "一只可爱得米老鼠"
+  }
