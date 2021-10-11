@@ -1,73 +1,73 @@
 var menuData = [
   {
-    title: "剖视图",
-    name: "viewClipping",
+    title: '剖视图',
+    name: 'viewClipping',
     items: [{
-      name: "X",
-      title: "X剖视图"
+      name: 'X',
+      title: 'X剖视图'
     },
     {
-      name: "Y",
-      title: "Y剖视图"
+      name: 'Y',
+      title: 'Y剖视图'
     },
     {
-      name: "Z",
-      title: "Z剖视图"
+      name: 'Z',
+      title: 'Z剖视图'
     }
     ]
   },
   {
-    title: "视角",
-    name: "viewCube",
+    title: '视角',
+    name: 'viewCube',
     items: [{
-      name: "FRONT",
-      title: "前视角"
+      name: 'FRONT',
+      title: '前视角'
     },
     {
-      name: "BACK",
-      title: "后视角"
+      name: 'BACK',
+      title: '后视角'
     },
     {
-      name: "LEFT",
-      title: "左视角"
+      name: 'LEFT',
+      title: '左视角'
     },
     {
-      name: "RIGHT",
-      title: "右视角"
+      name: 'RIGHT',
+      title: '右视角'
     },
     {
-      name: "TOP",
-      title: "上视角"
+      name: 'TOP',
+      title: '上视角'
     },
     {
-      name: "BOTTOM",
-      title: "下视角"
+      name: 'BOTTOM',
+      title: '下视角'
     }
     ]
   },
   {
-    title: "着色",
-    name: "shader",
+    title: '着色',
+    name: 'shader',
     items: [{
-      name: "wireframe",
-      title: "线框"
+      name: 'wireframe',
+      title: '线框'
     },
     {
-      name: "source",
-      title: "线框着色"
+      name: 'source',
+      title: '线框着色'
     }
     ]
   },
   {
-    title: "测量",
-    name: "measure",
+    title: '测量',
+    name: 'measure',
     items: [{
-      name: "distance",
-      title: "两点距离"
+      name: 'distance',
+      title: '两点距离'
     },
     {
-      name: "angle",
-      title: "平面夹角"
+      name: 'angle',
+      title: '平面夹角'
     }
     ]
   }
@@ -82,13 +82,13 @@ window.onload = function () {
 }
 
 function renderMenu () {
-  let menuHtml = '';
+  let menuHtml = ''
   for (let i = 0; i < menuData.length; i++) {
-    let menu = menuData[i];
+    let menu = menuData[i]
     let menuItemHtml = `<li class="menu-content"><a href="javascript:void(0);">${menu.title}</a>
     <ul class="menu-item">`
     for (let j = 0; j < menu.items.length; j++) {
-      menuItemHtml = menuItemHtml + `<li><a href="javascript:void(0);" onclick="onMenuClicked('${menu.name}','${menu.items[j].name}')">${menu.items[j].title}</a></li>`;
+      menuItemHtml = menuItemHtml + `<li><a href="javascript:void(0);" onclick="onMenuClicked('${menu.name}','${menu.items[j].name}')">${menu.items[j].title}</a></li>`
     }
     if (menu.name === 'viewClipping') {
       menuItemHtml = menuItemHtml + `<li><input id="sliderClipping" type="range" min="0" max="100" step="2" value="0" onchange="clippingChange(this.value)"/></li>`
@@ -101,6 +101,7 @@ function renderMenu () {
   menuDom.innerHTML = menuHtml
 }
 
+// eslint-disable-next-line no-unused-vars
 function onMenuClicked (name, subName) {
   switch (name) {
     case 'shader':
@@ -120,7 +121,7 @@ function onMenuClicked (name, subName) {
       currentClipping = subName
       break
     case 'measure':
-      viewer3d.addMeasurement(subName)
+      viewer3d.addMeasure(subName)
       break
   }
 }
@@ -154,6 +155,7 @@ function initViewer () {
     })
 }
 
+// eslint-disable-next-line no-unused-vars
 function clippingChange (val) {
   if (currentClipping !== 'NO') {
     let radius = viewer3d.getSphereRadius()

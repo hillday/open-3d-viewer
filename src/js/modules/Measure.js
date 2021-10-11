@@ -1,24 +1,19 @@
 import * as THREE from 'three'
-import TextSprite from 'three.textsprite'
-
+import TextSprite from '@seregpie/three.text-sprite'
 
 export class Measure extends THREE.Object3D {
-  constructor() {
+  constructor () {
     super()
     this.value = 0
     this.isEnd = false
     this.unitlabel = ' mm'
     this.showtext = new TextSprite({
-      material: {
-        color: 0xffffff,
-        fog: true
-      },
-      redrawInterval: 250,
-      textSize: 0.36,
-      texture: {
-        fontFamily: 'Arial, Helvetica, sans-serif',
-        text: this.value + this.unitlabel
-      }
+      alignment: 'right',
+      color: '#24ff00',
+      fontFamily: '"Times New Roman", Times, serif',
+      fontSize: 8,
+      fontStyle: 'normal',
+      text: this.value + this.unitlabel
     })
   }
 
@@ -33,7 +28,6 @@ export class Measure extends THREE.Object3D {
   movePoint (point) {
 
   }
-
 }
 
 export default Measure

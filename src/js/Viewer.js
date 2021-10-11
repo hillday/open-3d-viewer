@@ -1,15 +1,14 @@
-import _, { constant } from 'lodash'
+import _ from 'lodash'
 import Events from './utils/Events'
 import { ObjLoader } from './loaders/ObjLoader'
 import 'three/examples/js/controls/OrbitControls'
 import TWEEN from 'tween'
-import {MeasurementControls}  from './modules/MeasurementControls'
-import {Measurement} from './modules/Measurement'
-import {MeasurementDistance} from './modules/MeasurementDistance'
-import { DoubleSide } from 'three'
+import { MeasurementControls } from './modules/MeasurementControls'
+import { Measure } from './modules/Measure'
+import { MeasureDistance } from './modules/MeasureDistance'
 
 /**
- * options is view configure, look like 
+ * options is view configure, look like
  * {
  *    "model": {
  *      "path": "",
@@ -31,7 +30,7 @@ import { DoubleSide } from 'three'
  * }
  */
 export class Viewer {
-  constructor(options) {
+  constructor (options) {
     this._options = options || null
     this._container = document.getElementById('3d-container')
     if (!this._container) {
@@ -70,7 +69,6 @@ export class Viewer {
     // this._renderer.gammaFactor = 1.6
     this._renderer.setSize(this._container.clientWidth, this._container.clientHeight)
 
-
     this._element = this._renderer.domElement
     this._container.appendChild(this._element)
 
@@ -82,8 +80,8 @@ export class Viewer {
     this._controls.rotateSpeed = -0.05
     let scope = this
     this._controls.addEventListener('change', function () {
-			scope.measurementControls.update()
-		})
+      scope.measurementControls.update()
+    })
 
     let hemiLight = new THREE.HemisphereLight(0xffffff, 0x000000, 0.8)
 
@@ -93,43 +91,39 @@ export class Viewer {
     this._scene.add(hemiLight)
     this._scene.add(this._camera)
 
-    this.measurementControls = new MeasurementControls({objects: this._scene.children}, this._camera, this._container)
-		this.measurementControls.enabled = false
-		this.measurementControls.snap = true
-		
-		this._scene.add(this.measurementControls)
+    this.measurementControls = new MeasurementControls({ targets: this._scene.children, camera: this._camera, domElement: this._container })
+    this.measurementControls.enabled = false
+
+    this._scene.add(this.measurementControls)
   }
 
   addMeasurement (measurement) {
     this.measurementControls.add(measurement)
-		this.measurementControls.enabled = true
+    this.measurementControls.enabled = true
   }
 
   removeMeasurement (measurement) {
     this.measurementControls.remove(measurement)
-		if (measurement.parent)
-		  measurement.parent.remove(measurement)
+    if (measurement.parent) { measurement.parent.remove(measurement) }
   }
-  
-	clearMeasurements () {
+
+  clearMeasurements () {
     let measurements = []
-		for (let key in this._scene.children) {
-			this._scene.children[key].traverse( function ( child ) {
-				if ( child instanceof Measurement ) 
-				  measurements.push(child)
-			})	
-		}
-		
-		for (let key in measurements) {
-			this.removeMeasurement(measurements[key])
-		}
-		
+    for (let key in this._scene.children) {
+      this._scene.children[key].traverse(function (child) {
+        if (child instanceof Measure) { measurements.push(child) }
+      })
+    }
+
+    for (let key in measurements) {
+      this.removeMeasurement(measurements[key])
+    }
   }
-  
+
   addMeasure (type) {
-    switch(type){
+    switch (type) {
       case 'distance':
-        this.addMeasurement(new MeasurementDistance())
+        this.addMeasurement(new MeasureDistance())
         break
     }
   }
@@ -144,10 +138,10 @@ export class Viewer {
         geometry.computeBoundingSphere()
         let boundingSphere = geometry.boundingSphere.clone()
         mesh.updateMatrixWorld()
-        
-        mesh.translateX(-1*boundingSphere.center.x)
-        mesh.translateY(-1*boundingSphere.center.y)
-        mesh.translateZ(-1*boundingSphere.center.z)
+
+        mesh.translateX(-1 * boundingSphere.center.x)
+        mesh.translateY(-1 * boundingSphere.center.y)
+        mesh.translateZ(-1 * boundingSphere.center.z)
         geometry.computeBoundingSphere()
         boundingSphere = geometry.boundingSphere.clone()
         mesh.updateMatrixWorld()
@@ -186,8 +180,9 @@ export class Viewer {
   _loadScene () {
     switch (this._options.model.type) {
       case 'obj':
+        // eslint-disable-next-line no-new
         new ObjLoader(this._options.model)
-        break;
+        break
     }
   }
 
@@ -234,30 +229,29 @@ export class Viewer {
     let self = this
     switch (face) {
       case 'TOP':
-        orientation = new THREE.Vector3().set(0, self._boundingSphereRadius * self. _scaleRadio, 0)
+        orientation = new THREE.Vector3().set(0, self._boundingSphereRadius * self._scaleRadio, 0)
         break
       case 'BOTTOM':
-        orientation = new THREE.Vector3().set(0, -1 * self._boundingSphereRadius * self. _scaleRadio, 0)
+        orientation = new THREE.Vector3().set(0, -1 * self._boundingSphereRadius * self._scaleRadio, 0)
         break
       case 'FRONT':
-        orientation = new THREE.Vector3().set(0, 0, self._boundingSphereRadius * self. _scaleRadio)
+        orientation = new THREE.Vector3().set(0, 0, self._boundingSphereRadius * self._scaleRadio)
         break
       case 'BACK':
-        orientation = new THREE.Vector3().set(0, 0, -1 * self._boundingSphereRadius * self. _scaleRadio)
+        orientation = new THREE.Vector3().set(0, 0, -1 * self._boundingSphereRadius * self._scaleRadio)
         break
       case 'LEFT':
-        orientation = new THREE.Vector3().set(self._boundingSphereRadius * self. _scaleRadio, 0, 0)
+        orientation = new THREE.Vector3().set(self._boundingSphereRadius * self._scaleRadio, 0, 0)
         break
       case 'RIGHT':
-        orientation = new THREE.Vector3().set(-1 * self._boundingSphereRadius * self. _scaleRadio, 0, 0)
+        orientation = new THREE.Vector3().set(-1 * self._boundingSphereRadius * self._scaleRadio, 0, 0)
         break
     }
     return orientation
   }
 
   viewCube (face) {
-    if (face === this._currentViewCubeFace)
-      return false
+    if (face === this._currentViewCubeFace) { return false }
     this._currentViewCubeFace = face
     let orientation = this._getOrientation(face)
     if (orientation && this._camera) {
@@ -284,6 +278,7 @@ export class Viewer {
           pz: [leftPosition.z, finishPosition.z]
         }
       }
+      // eslint-disable-next-line no-unused-vars
       const positionTween = new TWEEN.Tween(option)
         .to(dtsOptions, 300)
         .easing(TWEEN.Easing.Linear.None)
@@ -293,7 +288,7 @@ export class Viewer {
           self._camera.position.copy(vector)
           self._camera.updateProjectionMatrix()
         })
-        .onComplete(function(){
+        .onComplete(function () {
 
         })
         .start()
@@ -302,11 +297,12 @@ export class Viewer {
   _addPlaneHelper (orientation, distance) {
     let self = this
     let geometry = new THREE.PlaneGeometry(self._boundingSphereRadius * 1.8, self._boundingSphereRadius * 1.8)
-    let material = new THREE.MeshBasicMaterial({color:0x0c4c8e,opacity: 0.2,
-       transparent: true, 
-       depthWrite: false,
-       side: THREE.DoubleSide})
-    let helper = new THREE.Mesh(geometry,material)
+    let material = new THREE.MeshBasicMaterial({ color: 0x0c4c8e,
+      opacity: 0.2,
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide })
+    let helper = new THREE.Mesh(geometry, material)
     switch (orientation) {
       case 'X' :
         helper.rotateY(-280 * Math.PI / 180)
@@ -326,7 +322,7 @@ export class Viewer {
   getSphereRadius () {
     return this._boundingSphereRadius
   }
-  clippingPlaneChange  (orientation, distance) {
+  clippingPlaneChange (orientation, distance) {
     let planeArr = []
     let self = this
     switch (orientation) {

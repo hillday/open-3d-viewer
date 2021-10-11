@@ -1,11 +1,15 @@
 /* eslint-disable space-before-function-paren */
 import * as THREE from 'three'
+import _ from 'lodash'
+import { Measure } from './Measure'
 
-export class MeasureCtrls {
+export class MeasurementControls extends THREE.Object3D {
   constructor (options) {
+    super()
     if (!options.camera) {
       throw new Error('[camera] is must need!!')
     }
+    // eslint-disable-next-line no-self-assign
     options.camera = options.camera
     options.domElement = options.domElement || document
     options.targets = options.targets || []
@@ -15,8 +19,9 @@ export class MeasureCtrls {
 
     this.mouse = new THREE.Vector2()
     this.raycaster = new THREE.Raycaster()
+    this.enabled = false
     this.isActive = false
-    this.targetObjects =  options.targets
+    this.targetObjects = options.targets
     this.measureInstances = new THREE.Group()
     this.currentMeasure = null
 
@@ -33,7 +38,7 @@ export class MeasureCtrls {
   }
 
   createMeasure (name) {
-    
+
   }
 
   isActivity() {
@@ -76,7 +81,7 @@ export class MeasureCtrls {
   }
 
   show() {
- 
+
   }
 
   onDocumentDown(event) {
@@ -105,6 +110,11 @@ export class MeasureCtrls {
     if (this.isActive) {
       this.toggleMeasure()
       this.getMousePos(event)
+      _.forEach(this.children, function (obj) {
+        if (obj instanceof Measure) {
+          obj.isEnd = true
+        }
+      })
     }
   }
 
@@ -113,9 +123,18 @@ export class MeasureCtrls {
       this.raycaster.setFromCamera(this.mouse, this.camera)
       this.intersects = this.raycaster.intersectObjects(this.targetObjects)
       if (this.intersects.length > 0) {
-        
+        let point = this.intersects[0].point
+        _.forEach(this.children, function (obj) {
+          if (obj instanceof Measure) {
+            obj.movePoint(point)
+          }
+        })
       }
     }
   }
+
+  update() {
+    this.processIntersections()
+  }
 }
-export default MeasureCtrls
+export default MeasurementControls
